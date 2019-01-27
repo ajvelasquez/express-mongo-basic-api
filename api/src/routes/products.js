@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const Product = require("../db/models/product");
+
 router.get('/', (req, res) => {
     res.status(200).json({
         msg: 'Handling GET requests to products/'
@@ -8,10 +10,14 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const product = {
+    const productData = {
         name: req.body.name,
         price: req.body.price,
     };
+
+    const product = new Product(productData);
+
+    product.save();
 
     res.status(201).json({
         msg: 'Handling POST requests to products/',

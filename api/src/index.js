@@ -4,6 +4,9 @@ const morgan = require('morgan');
 
 const env = require('./env');
 const routes = require('./routes');
+const db = require("./db");
+
+db.connect();
 
 const PORT = env.app.port;
 
@@ -11,6 +14,22 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authroization"
+    );
+
+    if (req.method == "OPTIONS") {
+        res.header(
+            "Access-Control-Allow-Methods",
+            "PUT, POST, PATCH, DELETE, GET"
+        );
+    }
+
+    next();
+});
 
 routes(app);
 
