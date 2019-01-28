@@ -6,9 +6,9 @@ const env = require('./env');
 const routes = require('./routes');
 const db = require("./db");
 
-db.connect();
-
 const PORT = env.app.port;
+
+app.use(db.connect);
 
 app.use(morgan('dev'));
 app.use(express.json());

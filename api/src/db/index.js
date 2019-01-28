@@ -9,13 +9,14 @@ const options = {
     pass: env.db.pass,
 };
 
-const connect = () => {
+const connect = (req, res, next) => {
     mongoose.connect(url, options, (err) => {
         if (err) {
             console.error(`DB connection error: ${err}`);
-
-            return err;
+            return next(err);
         }
+
+        next();
     });
 };
 
