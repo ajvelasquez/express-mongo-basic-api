@@ -8,7 +8,8 @@ router.get('/', (req, res) => {
         .then(res => {
             status = 200;
             response = res;
-        }).catch(err => {
+        })
+        .catch(err => {
             status = 500;
             response = err;
         })
@@ -24,12 +25,12 @@ router.post('/', (req, res) => {
     let response = null;
 
     const product = new Product(productData);
-
     product.save()
         .then(res => {
             status = 201;
             response = res;
-        }).catch(err => {
+        })
+        .catch(err => {
             status = 500;
             response = err;
         })
@@ -47,7 +48,8 @@ router.get('/:id', (req, res) => {
             }
 
             response = res;
-        }).catch(err => {
+        })
+        .catch(err => {
             status = 500;
             response = err;
         })
@@ -72,7 +74,8 @@ router.put('/:id', (req, res) => {
             }
 
             response = res;
-        }).catch(err => {
+        })
+        .catch(err => {
             status = 500;
             response = err;
         })
@@ -91,7 +94,8 @@ router.delete('/:id', (req, res) => {
             }
 
             response = res;
-        }).catch(err => {
+        })
+        .catch(err => {
             status = 500;
             response = err;
         })
