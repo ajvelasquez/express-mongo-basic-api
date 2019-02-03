@@ -3,103 +3,78 @@ const router = express.Router();
 
 const Product = require("../db/models/product");
 
-router.get('/', (req, res) => {
-    Product.find()
-        .then(res => {
-            status = 200;
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+router.get('/', async (req, res, next) => {
+    try {
+        let products = await Product.find(); 
+
+        return res.status(200).json(products);
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.post('/', (req, res) => {
-    const productData = {
-        name: req.body.name,
-        price: req.body.price,
-    };
-    let status = null;
-    let response = null;
+router.post('/', async (req, res, next) => {
+    try {
+        const productData = {
+            name: req.body.name,
+            price: req.body.price,
+        };
+    
+        const product = new Product(productData);
+        response = await product.save();
 
-    const product = new Product(productData);
-    product.save()
-        .then(res => {
-            status = 201;
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        return res.status(201).json(product);
+    } catch (error) {
+        next((error));
+    }
 });
 
-router.get('/:id', (req, res) => {
-    const id = req.params.id;
-    Product.findById(id)
-        .then(res => {
-            if (res) {
-                status = 200;
-            } else {
-                status = 404;
-            }
+router.get('/:id', async (req, res, next) => {
+    try {
+        let status = 200;
+        const id = req.params.id;
 
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        let product = await Product.findById(id);
+        if (!product) status = 404;
+
+        return res.status(status).json(product)
+    } catch (error) {
+        next((error));
+    }
 });
 
-router.put('/:id', (req, res) => {
-    const id = req.params.id;
-    const productData = {
-        name: req.body.name,
-        price: req.body.price,
-    };
+router.put('/:id', async (req, res, next) => {
+    try {
+        let status = 200;
+        const id = req.params.id;
+        const productData = {
+            name: req.body.name,
+            price: req.body.price,
+        };
 
-    Product.update({ _id: id }, {
-        $set: productData
-    })
-        .then(res => {
-            if (res) {
-                status = 200;
-            } else {
-                status = 404;
-            }
+        let product = await Product.update({ _id: id }, {
+            $set: productData
+        });
+        if (!product) status = 404;
 
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        return  res.status(status).json(product);
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.delete('/:id', (req, res) => {
-    const id = req.params.id;
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let status = 200;
+        const id = req.params.id;
 
-    Product.remove({_id: id})
-        .then(res => {
-            if (res) {
-                status = 200;
-            } else {
-                status = 404;
-            }
+        product = await Product.remove({_id: id});
+        if (!product) status = 404;
 
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        return  res.status(status).json(product);        
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

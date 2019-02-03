@@ -36,8 +36,7 @@ routes(app);
 app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.status(err.status || 500).send({
-        message: err.message || 'Something broke!',
-        status: err.status
+        error: err.message || 'Something broke!'
     });
   });
 
