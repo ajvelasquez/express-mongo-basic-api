@@ -7,6 +7,7 @@ const Product = require('../db/models/product');
 
 router.get('/', (req, res, next) => {
     Order.find()
+        .populate('product')
         .then(res => {
                 status = 200;
                 response = res;
@@ -55,6 +56,7 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
     const id = req.params.id;
     Order.findById(id)
+        .populate('product')
         .then(res => {
             if (res) {
                 status = 200;
