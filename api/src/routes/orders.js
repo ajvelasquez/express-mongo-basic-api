@@ -5,99 +5,84 @@ const mongoose = require('mongoose');
 const Order = require('../db/models/order');
 const Product = require('../db/models/product');
 
-router.get('/', (req, res, next) => {
-    Order.find()
-        .populate('product')
-        .then(res => {
-                status = 200;
-                response = res;
-        })
-        .catch(err => {
-                status = 500;
-                response = err;
-        })
-        .finally(() => res.status(status).json(response));
+router.get('/', async (req, res, next) => {
+    try {
+        let response = await Order.find()
+        .populate('product');
+
+        return res.status(200).json(response);
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.post('/', (req, res) => {
-    let status = null;
-    let response = null;
+router.post('/', async (req, res, next) => {
+    try {
+        let product = await Product.findById(req.body.productId);
 
-    Product.findById(req.body.productId)
-        .then((res) => {
-            if (res) {
-                const data = {
-                    quantity: req.body.quantity,
-                    product: req.body.productId
-                };
+        if (!product) {
+            return next({
+                status: 404,
+                message: 'Product not found'
+                
+            });
+        }
+
+        const data = {
+            quantity: req.body.quantity,
+            product: req.body.productId
+        };
+    
+        const order = new Order(data);
+        let response = await order.save();
             
-                const order = new Order(data);
-                return order.save();
-            }
-        })
-        .then(res => {
-            if (!res) {
-                status = 404;
-                response = {
-                    message: 'Product not found'
-                };
-            } else {
-                status = 201;
-                response = res;
-            }
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        return res.status(201).json(response);
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.get('/:id', (req, res) => {
-    const id = req.params.id;
-    Order.findById(id)
-        .populate('product')
-        .then(res => {
-            if (res) {
-                status = 200;
-            } else {
-                status = 404;
-            }
+router.get('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        let status = 200;
+        let response = await Order.findById(id)
+            .populate('product');
 
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        if (!response) {
+            status = 404;
+        }
+        
+        return res.status(status).json(response);
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.put('/:id', (req, res) => {
-    const id = req.params.id;
-    res.status(200).json({
-        id: id
-    });
+router.put('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        res.status(200).json({
+            id: id
+        });
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.delete('/:id', (req, res) => {
-    const id = req.params.id;
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        let status = 200;
 
-    Order.remove({_id: id})
-        .then(res => {
-            if (res) {
-                status = 200;
-            } else {
-                status = 404;
-            }
+        let response = await Order.remove({_id: id});
 
-            response = res;
-        })
-        .catch(err => {
-            status = 500;
-            response = err;
-        })
-        .finally(() => res.status(status).json(response));
+        if (!response) status = 404;
+        
+        return res.status(status).json(response);
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;
