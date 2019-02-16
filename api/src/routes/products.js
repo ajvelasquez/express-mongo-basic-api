@@ -50,7 +50,7 @@ router.post('/', upload.single('productImage'), async (req, res, next) => {
 
         return res.status(201).json(product);
     } catch (error) {
-        next((error));
+        next(error);
     }
 });
 
@@ -64,7 +64,7 @@ router.get('/:id', async (req, res, next) => {
 
         return res.status(status).json(product)
     } catch (error) {
-        next((error));
+        next(error);
     }
 });
 
