@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const Product = require("../db/models/product");
 const multer = require('multer');
+
+const Product = require("../db/models/product");
+const autMidd = require('../middlewares/auth');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -37,7 +39,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', upload.single('productImage'), async (req, res, next) => {
+router.post('/', autMidd, upload.single('productImage'), async (req, res, next) => {
     try {
         const productData = {
             name: req.body.name,
@@ -54,7 +56,7 @@ router.post('/', upload.single('productImage'), async (req, res, next) => {
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', autMidd, async (req, res, next) => {
     try {
         let status = 200;
         const id = req.params.id;
@@ -68,7 +70,7 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', autMidd, async (req, res, next) => {
     try {
         let status = 200;
         const id = req.params.id;
@@ -88,7 +90,7 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', autMidd, async (req, res, next) => {
     try {
         let status = 200;
         const id = req.params.id;

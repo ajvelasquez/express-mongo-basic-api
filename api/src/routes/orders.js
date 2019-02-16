@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
 
 const Order = require('../db/models/order');
 const Product = require('../db/models/product');
+const autMidd = require('../middlewares/auth');
 
-router.get('/', async (req, res, next) => {
+router.get('/', autMidd, async (req, res, next) => {
     try {
         let response = await Order.find()
         .populate('product');
@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', autMidd, async (req, res, next) => {
     try {
         let product = await Product.findById(req.body.productId);
 
@@ -42,7 +42,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', autMidd, async (req, res, next) => {
     try {
         const id = req.params.id;
         let status = 200;
@@ -59,7 +59,7 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', autMidd, async (req, res, next) => {
     try {
         const id = req.params.id;
         res.status(200).json({
@@ -70,7 +70,7 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', autMidd, async (req, res, next) => {
     try {
         const id = req.params.id;
         let status = 200;
