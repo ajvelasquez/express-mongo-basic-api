@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 
 const Order = require('../db/models/order');
 const Product = require('../db/models/product');
