@@ -2,6 +2,30 @@ const express = require('express');
 const router = express.Router();
 
 const Product = require("../db/models/product");
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toDateString() + file.originalname);
+    }
+});
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype == 'image/png') {
+        return cb(null, true);
+    }
+    
+    return cb(new Error('Not valid mime type'), false);
+};
+const upload = multer({
+    storage: storage, 
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 router.get('/', async (req, res, next) => {
     try {
@@ -13,11 +37,12 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', upload.single('productImage'), async (req, res, next) => {
     try {
         const productData = {
             name: req.body.name,
             price: req.body.price,
+            productImage: req.file.path
         };
     
         const product = new Product(productData);
