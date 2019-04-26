@@ -3,11 +3,10 @@
 ## Quick Start
 
 ```
-#build dokcer containers
+#build docker containers
 docker-compose up
 
-#install dependencies
+#enter API container, then install dependencies
 docker-compose exec api bash
-#then
 npm install
 ```
